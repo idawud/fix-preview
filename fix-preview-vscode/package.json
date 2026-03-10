@@ -4,11 +4,20 @@
     "description": "Side-by-side preview for FIX protocol messages.",
     "version": "1.0.0",
     "publisher": "antigravity",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/idawud/fix-preview.git"
+    },
+    "license": "MIT",
     "engines": {
         "vscode": "^1.75.0"
     },
     "categories": [
         "Other"
+    ],
+    "activationEvents": [
+        "onCommand:fix-preview.open",
+        "onLanguage:fix"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -48,17 +57,22 @@
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
-        "test": "node ./out/test/runTest.js"
+        "test": "node ./out/test/runTest.js",
+        "package": "vsce package"
     },
     "devDependencies": {
         "@types/node": "16.x",
         "@types/vscode": "^1.75.0",
         "@typescript-eslint/eslint-plugin": "^5.51.0",
         "@typescript-eslint/parser": "^5.51.0",
+        "@vscode/vsce": "2.15.0",
         "eslint": "^8.33.0",
         "typescript": "^4.9.5"
     },
     "dependencies": {
         "fast-xml-parser": "^5.4.2"
+    },
+    "overrides": {
+        "undici": "5.28.4"
     }
 }

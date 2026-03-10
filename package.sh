@@ -22,7 +22,7 @@ package_vscode() {
     cd fix-preview-vscode
     npm install
     npm run compile
-    npx vsce package
+    yes | npm run package
     echo "VSCode extension packaged successfully!"
     cd ..
 }
