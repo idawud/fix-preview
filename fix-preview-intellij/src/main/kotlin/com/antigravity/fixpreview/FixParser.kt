@@ -7,10 +7,13 @@ data class FixField(
     val enumName: String,
     val description: String,
     val isRepeatingGroup: Boolean = false,
+    val section: String = "Body",
     val children: MutableList<MutableList<FixField>>? = null
 )
 
 class FixParser(private val schemaLoader: SchemaLoader) {
+    private val headerTags = setOf("8", "9", "35", "49", "56", "34", "52", "122", "115", "128", "90", "91", "212", "213", "347", "369", "627", "628", "629", "630")
+    private val tailTags = setOf("10", "89", "93")
 
     fun parse(raw: String): List<FixField> {
         val delimiter = detectDelimiter(raw)
@@ -30,6 +33,12 @@ class FixParser(private val schemaLoader: SchemaLoader) {
 
             val isGroupHeader = metadata?.type == "NumInGroup" || (metadata?.name?.startsWith("No") == true && value.toIntOrNull() != null)
 
+            val section = when {
+                headerTags.contains(tag) -> "Header"
+                tailTags.contains(tag) -> "Tail"
+                else -> "Body"
+            }
+
             val field = FixField(
                 tag = tag,
                 tagName = metadata?.name ?: "Unknown",
@@ -37,6 +46,7 @@ class FixParser(private val schemaLoader: SchemaLoader) {
                 enumName = enumMetadata?.name ?: "",
                 description = metadata?.description ?: "",
                 isRepeatingGroup = isGroupHeader,
+                section = section,
                 children = if (isGroupHeader) mutableListOf() else null
             )
 
