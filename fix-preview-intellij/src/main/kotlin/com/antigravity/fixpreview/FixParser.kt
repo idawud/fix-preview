@@ -50,6 +50,10 @@ class FixParser(private val schemaLoader: SchemaLoader) {
                 children = if (isGroupHeader) mutableListOf() else null
             )
 
+            if (tag == "10") {
+                stack.clear()
+            }
+
             if (isGroupHeader) {
                 if (stack.isNotEmpty()) {
                     val currentGroup = stack.last()

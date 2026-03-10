@@ -13,99 +13,146 @@ class TableRenderer {
                 <meta charset="UTF-8">
                 <style>
                     body {
-                        font-family: sans-serif;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                         font-size: 13px;
                         margin: 0;
+                        padding: 0;
+                        background-color: #2b2b2b; /* IntelliJ Darker background */
+                        color: #a9b7c6;
+                    }
+                    .container {
                         padding: 10px;
-                        background-color: #3c3f41; /* Darcula background */
-                        color: #afb1b3;
                     }
                     table {
                         width: 100%;
                         border-collapse: collapse;
-                        margin-bottom: 20px;
+                        table-layout: fixed;
                     }
-                    th {
+                    th, td {
+                        padding: 8px;
+                        text-align: left;
+                        vertical-align: top;
+                        word-wrap: break-word;
+                    }
+                    thead th {
                         position: sticky;
                         top: 0;
-                        background: #3c3f41;
-                        text-align: left;
+                        background: #313335;
                         border-bottom: 2px solid #515151;
-                        padding: 8px;
-                        z-index: 10;
-                    }
-                    td {
-                        border-bottom: 1px solid #515151;
-                        padding: 8px;
-                        vertical-align: top;
-                    }
-                    .tag { color: #cc7832; font-weight: bold; width: 60px; }
-                    .field-name { color: #9876aa; width: 150px; }
-                    .enum { color: #6a8759; font-style: italic; }
-                    .section-header {
-                        background-color: #4b4d4d;
-                        padding: 8px;
-                        font-weight: bold;
-                        border-left: 4px solid #cc7832;
-                        margin-top: 15px;
-                        margin-bottom: 5px;
-                        color: #afb1b3;
+                        z-index: 100;
+                        color: #808080;
+                        font-size: 11px;
                         text-transform: uppercase;
-                        letter-spacing: 1px;
-                        font-size: 0.9em;
                     }
-                    details {
-                        margin: 5px 0 5px 20px;
-                        border: 1px solid #515151;
-                        border-radius: 4px;
-                        background: #3c3f41;
+                    /* Fixed widths for alignment */
+                    .col-tag { width: 50px; }
+                    .col-name { width: 150px; }
+                    .col-value { width: 150px; }
+                    .col-enum { width: 120px; }
+                    .col-desc { width: auto; }
+
+                    tr:hover {
+                        background-color: #323232;
                     }
-                    summary {
-                        padding: 8px;
-                        cursor: pointer;
+                    .tag { color: #cc7832; font-weight: bold; }
+                    .field-name { color: #9876aa; }
+                    .enum { color: #6a8759; font-style: italic; }
+                    
+                    details.section {
+                        margin-bottom: 2px;
+                        border-bottom: 1px solid #323232;
+                    }
+                    details.section > summary {
+                        background-color: #3c3f41;
+                        padding: 10px;
                         font-weight: bold;
+                        cursor: pointer;
                         outline: none;
+                        display: flex;
+                        align-items: center;
+                        color: #bbbbbb;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        font-size: 12px;
                     }
-                    summary:hover {
-                        background: #4b4d4d;
+                    details.section > summary::-webkit-details-marker {
+                        display: none;
                     }
-                    .nested-content {
-                        padding: 5px;
-                        background: #3c3f41;
+                    details.section > summary::before {
+                        content: '▶';
+                        display: inline-block;
+                        width: 15px;
+                        transition: transform 0.2s;
+                        font-size: 10px;
+                        margin-right: 5px;
+                    }
+                    details.section[open] > summary::before {
+                        transform: rotate(90deg);
+                    }
+                    details.section > summary:hover {
+                        background-color: #4b4d4d;
+                    }
+                    
+                    .section-content {
+                        padding: 0;
+                    }
+
+                    /* Nested repeating groups */
+                    details.group {
+                        margin: 4px 0 4px 20px;
+                        border: 1px solid #414141;
+                        border-radius: 2px;
+                    }
+                    details.group > summary {
+                        padding: 6px;
+                        background: #323232;
+                        font-size: 11px;
+                        cursor: pointer;
+                    }
+                    .group-content {
+                        padding: 0;
                     }
                     .group-header-row {
-                        background-color: #4b4d4d;
-                        font-weight: bold;
+                        background-color: #36393b;
                     }
                 </style>
             </head>
             <body>
-                ${renderSection("Standard Header", headerFields)}
-                ${renderSection("Message Body", bodyFields)}
-                ${renderSection("Standard Trailer", tailFields)}
+                <div class="container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-tag">Tag</th>
+                                <th class="col-name">Field Name</th>
+                                <th class="col-value">Value</th>
+                                <th class="col-enum">Enum</th>
+                                <th class="col-desc">Description</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    
+                    ${renderSection("Standard Header", headerFields, true)}
+                    ${renderSection("Message Body", bodyFields, true)}
+                    ${renderSection("Standard Trailer", tailFields, true)}
+                </div>
             </body>
             </html>
         """.trimIndent()
     }
 
-    private fun renderSection(title: String, fields: List<FixField>): String {
+    private fun renderSection(title: String, fields: List<FixField>, isOpen: Boolean): String {
         if (fields.isEmpty()) return ""
         return """
-            <div class="section-header">$title</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th class="tag">Tag</th>
-                        <th class="field-name">Field Name</th>
-                        <th>Value</th>
-                        <th>Enum</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${renderFields(fields)}
-                </tbody>
-            </table>
+            <details class="section" ${if (isOpen) "open" else ""}>
+                <summary>$title</summary>
+                <div class="section-content">
+                    <table>
+                        <tbody>
+                            ${renderFields(fields)}
+                        </tbody>
+                    </table>
+                </div>
+            </details>
         """.trimIndent()
     }
 
@@ -114,11 +161,11 @@ class TableRenderer {
         for (field in fields) {
             sb.append("""
                 <tr class="${if (field.isRepeatingGroup) "group-header-row" else ""}">
-                    <td class="tag">${field.tag}</td>
-                    <td class="field-name">${field.tagName}</td>
-                    <td>${field.value}</td>
-                    <td class="enum">${field.enumName}</td>
-                    <td>${field.description}</td>
+                    <td class="col-tag tag">${field.tag}</td>
+                    <td class="col-name field-name">${field.tagName}</td>
+                    <td class="col-value">${field.value}</td>
+                    <td class="col-enum enum">${field.enumName}</td>
+                    <td class="col-desc">${field.description}</td>
                 </tr>
             """.trimIndent())
 
@@ -127,9 +174,9 @@ class TableRenderer {
                     <tr>
                         <td colspan="5" style="padding: 0;">
                             ${field.children.mapIndexed { index, entry -> """
-                                <details>
+                                <details class="group">
                                     <summary>Entry #${index + 1}</summary>
-                                    <div class="nested-content">
+                                    <div class="group-content">
                                         <table>
                                             <tbody>
                                                 ${renderFields(entry)}
