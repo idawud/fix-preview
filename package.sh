@@ -24,6 +24,8 @@ package_vscode() {
     npm run compile
     yes | npm run package
     echo "VSCode extension packaged successfully!"
+    # copy to downloads folder
+    cp fix-preview-*.vsix ../downloads
     cd ..
 }
 
@@ -37,6 +39,8 @@ package_intellij() {
         gradle buildPlugin
     fi
     echo "IntelliJ plugin packaged successfully!"
+    # copy to downloads folder
+    cp ./build/distributions/fix-preview-*.zip ../downloads
     cd ..
 }
 
