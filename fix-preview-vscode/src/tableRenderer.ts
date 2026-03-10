@@ -2,6 +2,10 @@ import { FixField } from './fixParser';
 
 export class TableRenderer {
     public render(fields: FixField[]): string {
+        const headerFields = fields.filter(f => f.section === 'Header');
+        const bodyFields = fields.filter(f => f.section === 'Body');
+        const tailFields = fields.filter(f => f.section === 'Tail');
+
         return `
             <!DOCTYPE html>
             <html lang="en">
@@ -19,7 +23,7 @@ export class TableRenderer {
                     table {
                         width: 100%;
                         border-collapse: collapse;
-                        margin-top: 10px;
+                        margin-bottom: 20px;
                     }
                     th {
                         position: sticky;
@@ -35,51 +39,81 @@ export class TableRenderer {
                         padding: 8px;
                         vertical-align: top;
                     }
-                    tr:hover {
-                        background-color: var(--vscode-list-hoverBackground);
-                    }
-                    .tag { color: var(--vscode-symbolIcon-fieldForeground); font-weight: bold; }
-                    .field-name { color: var(--vscode-symbolIcon-propertyForeground); }
+                    .tag { color: var(--vscode-symbolIcon-fieldForeground); font-weight: bold; width: 60px; }
+                    .field-name { color: var(--vscode-symbolIcon-propertyForeground); width: 150px; }
                     .enum { color: var(--vscode-symbolIcon-enumeratorMemberForeground); font-style: italic; }
-                    .repeating-group {
-                        background-color: var(--vscode-sideBar-background);
+                    .section-header {
+                        background-color: var(--vscode-editorGroupHeader-tabsBackground);
+                        padding: 8px;
+                        font-weight: bold;
                         border-left: 4px solid var(--vscode-button-background);
+                        margin-top: 15px;
+                        margin-bottom: 5px;
+                        color: var(--vscode-descriptionForeground);
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        font-size: 0.9em;
                     }
-                    .nested-table {
+                    details {
                         margin: 5px 0 5px 20px;
-                        width: calc(100% - 20px);
                         border: 1px solid var(--vscode-panel-border);
+                        border-radius: 4px;
+                        background: var(--vscode-sideBar-background);
                     }
-                    .group-header {
+                    summary {
+                        padding: 8px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        outline: none;
+                        transition: background 0.2s;
+                    }
+                    summary:hover {
+                        background: var(--vscode-list-hoverBackground);
+                    }
+                    .nested-content {
+                        padding: 5px;
+                        background: var(--vscode-editor-background);
+                    }
+                    .group-header-row {
                         background-color: var(--vscode-list-inactiveSelectionBackground);
                         font-weight: bold;
                     }
                 </style>
             </head>
             <body>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tag</th>
-                            <th>Field Name</th>
-                            <th>Value</th>
-                            <th>Enum</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${this.renderFields(fields)}
-                    </tbody>
-                </table>
+                ${this.renderSection('Standard Header', headerFields)}
+                ${this.renderSection('Message Body', bodyFields)}
+                ${this.renderSection('Standard Trailer', tailFields)}
             </body>
             </html>
+        `;
+    }
+
+    private renderSection(title: string, fields: FixField[]): string {
+        if (fields.length === 0) return '';
+        return `
+            <div class="section-header">${title}</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="tag">Tag</th>
+                        <th class="field-name">Field Name</th>
+                        <th>Value</th>
+                        <th>Enum</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${this.renderFields(fields)}
+                </tbody>
+            </table>
         `;
     }
 
     private renderFields(fields: FixField[]): string {
         return fields.map(field => {
             let html = `
-                <tr class="${field.isRepeatingGroup ? 'group-header' : ''}">
+                <tr class="${field.isRepeatingGroup ? 'group-header-row' : ''}">
                     <td class="tag">${field.tag}</td>
                     <td class="field-name">${field.tagName}</td>
                     <td>${field.value}</td>
@@ -89,22 +123,24 @@ export class TableRenderer {
             `;
 
             if (field.isRepeatingGroup && field.children) {
-                field.children.forEach((entry, index) => {
-                    html += `
-                        <tr class="repeating-group">
-                            <td colspan="5" style="padding: 0;">
-                                <table class="nested-table">
-                                    <thead>
-                                        <tr><th colspan="5">Entry #${index + 1}</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        ${this.renderFields(entry)}
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    `;
-                });
+                html += `
+                    <tr>
+                        <td colspan="5" style="padding: 0;">
+                            ${field.children.map((entry, index) => `
+                                <details>
+                                    <summary>Entry #${index + 1}</summary>
+                                    <div class="nested-content">
+                                        <table>
+                                            <tbody>
+                                                ${this.renderFields(entry)}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </details>
+                            `).join('')}
+                        </td>
+                    </tr>
+                `;
             }
 
             return html;
