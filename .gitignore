@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+package-lock.json
+out/
+.vscode-test/
+*.vsix
+
+# Gradle
+.gradle/
+build/
+bin/
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

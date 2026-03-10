@@ -1,0 +1,20 @@
+<idea-plugin>
+    <id>com.antigravity.fixpreview</id>
+    <name>FIX Preview</name>
+    <vendor>Antigravity</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="FIX" implementationClass="com.antigravity.fixpreview.FixFileType" extensions="fix"/>
+    </extensions>
+
+    <actions>
+        <action id="com.antigravity.fixpreview.OpenFixPreview"
+                class="com.antigravity.fixpreview.FixPreviewAction"
+                text="Open FIX Preview"
+                description="Open a side-by-side FIX message preview">
+            <add-to-group group-id="EditorTabPopupGroup" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
