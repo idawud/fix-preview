@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2023.2.5")
+        intellijIdeaCommunity("2024.3.5")
         instrumentationTools()
     }
 }
@@ -27,6 +27,12 @@ intellijPlatform {
         name = "FIX Preview"
         version = "1.0.0"
     }
+
+    buildSearchableOptions = false
+}
+
+tasks.named<org.jetbrains.intellij.platform.gradle.tasks.PatchPluginXmlTask>("patchPluginXml") {
+    untilBuild.set(provider { null })
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
