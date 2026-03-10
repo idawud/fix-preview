@@ -18,41 +18,62 @@ export class TableRenderer {
                         color: var(--vscode-foreground);
                         background-color: var(--vscode-editor-background);
                         margin: 0;
-                        padding: 10px;
+                        padding: 0;
                     }
                     table {
                         width: 100%;
                         border-collapse: collapse;
-                        margin-bottom: 20px;
+                        table-layout: fixed;
                     }
-                    th {
+                    thead th {
                         position: sticky;
                         top: 0;
                         background: var(--vscode-editor-background);
                         text-align: left;
                         border-bottom: 2px solid var(--vscode-panel-border);
                         padding: 8px;
-                        z-index: 10;
+                        z-index: 100;
                     }
                     td {
                         border-bottom: 1px solid var(--vscode-panel-border);
                         padding: 8px;
                         vertical-align: top;
+                        word-break: break-word;
                     }
-                    .tag { color: var(--vscode-symbolIcon-fieldForeground); font-weight: bold; width: 60px; }
-                    .field-name { color: var(--vscode-symbolIcon-propertyForeground); width: 150px; }
-                    .enum { color: var(--vscode-symbolIcon-enumeratorMemberForeground); font-style: italic; }
+                    .tag { width: 60px; color: var(--vscode-symbolIcon-fieldForeground); font-weight: bold; }
+                    .field-name { width: 180px; color: var(--vscode-symbolIcon-propertyForeground); }
+                    .value { width: 200px; }
+                    .enum { width: 180px; color: var(--vscode-symbolIcon-enumeratorMemberForeground); font-style: italic; }
+                    .description { width: auto; color: var(--vscode-descriptionForeground); }
+
                     .section-header {
                         background-color: var(--vscode-editorGroupHeader-tabsBackground);
-                        padding: 8px;
+                        cursor: pointer;
+                        user-select: none;
                         font-weight: bold;
-                        border-left: 4px solid var(--vscode-button-background);
-                        margin-top: 15px;
-                        margin-bottom: 5px;
-                        color: var(--vscode-descriptionForeground);
+                    }
+                    .section-header td {
+                        padding: 10px 8px;
+                        border-bottom: 2px solid var(--vscode-button-background);
+                        color: var(--vscode-button-background);
                         text-transform: uppercase;
                         letter-spacing: 1px;
                         font-size: 0.9em;
+                    }
+                    .section-header:hover {
+                        background-color: var(--vscode-list-hoverBackground);
+                    }
+                    .arrow {
+                        display: inline-block;
+                        width: 20px;
+                        transition: transform 0.2s;
+                    }
+                    .collapsed .arrow {
+                        transform: rotate(-90deg);
+                    }
+                    .group-header-row {
+                        background-color: var(--vscode-list-inactiveSelectionBackground);
+                        font-weight: bold;
                     }
                     details {
                         margin: 5px 0 5px 20px;
@@ -65,48 +86,58 @@ export class TableRenderer {
                         cursor: pointer;
                         font-weight: bold;
                         outline: none;
-                        transition: background 0.2s;
-                    }
-                    summary:hover {
-                        background: var(--vscode-list-hoverBackground);
                     }
                     .nested-content {
                         padding: 5px;
                         background: var(--vscode-editor-background);
                     }
-                    .group-header-row {
-                        background-color: var(--vscode-list-inactiveSelectionBackground);
-                        font-weight: bold;
+                    .nested-content table {
+                        table-layout: auto;
                     }
                 </style>
+                <script>
+                    function toggleSection(id) {
+                        const tbody = document.getElementById(id);
+                        const row = tbody.previousElementSibling;
+                        if (tbody.style.display === 'none') {
+                            tbody.style.display = 'table-row-group';
+                            row.classList.remove('collapsed');
+                        } else {
+                            tbody.style.display = 'none';
+                            row.classList.add('collapsed');
+                        }
+                    }
+                </script>
             </head>
             <body>
-                ${this.renderSection('Standard Header', headerFields)}
-                ${this.renderSection('Message Body', bodyFields)}
-                ${this.renderSection('Standard Trailer', tailFields)}
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="tag">Tag</th>
+                            <th class="field-name">Field Name</th>
+                            <th class="value">Value</th>
+                            <th class="enum">Enum</th>
+                            <th class="description">Description</th>
+                        </tr>
+                    </thead>
+                    ${this.renderCollapsibleSection('header', 'Standard Header', headerFields)}
+                    ${this.renderCollapsibleSection('body', 'Message Body', bodyFields)}
+                    ${this.renderCollapsibleSection('tail', 'Standard Trailer', tailFields)}
+                </table>
             </body>
             </html>
         `;
     }
 
-    private renderSection(title: string, fields: FixField[]): string {
+    private renderCollapsibleSection(id: string, title: string, fields: FixField[]): string {
         if (fields.length === 0) return '';
         return `
-            <div class="section-header">${title}</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th class="tag">Tag</th>
-                        <th class="field-name">Field Name</th>
-                        <th>Value</th>
-                        <th>Enum</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${this.renderFields(fields)}
-                </tbody>
-            </table>
+            <tr class="section-header" onclick="toggleSection('${id}')">
+                <td colspan="5"><span class="arrow">▼</span> ${title}</td>
+            </tr>
+            <tbody id="${id}">
+                ${this.renderFields(fields)}
+            </tbody>
         `;
     }
 
@@ -116,9 +147,9 @@ export class TableRenderer {
                 <tr class="${field.isRepeatingGroup ? 'group-header-row' : ''}">
                     <td class="tag">${field.tag}</td>
                     <td class="field-name">${field.tagName}</td>
-                    <td>${field.value}</td>
+                    <td class="value">${field.value}</td>
                     <td class="enum">${field.enumName}</td>
-                    <td>${field.description}</td>
+                    <td class="description">${field.description}</td>
                 </tr>
             `;
 
