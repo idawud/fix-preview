@@ -1,17 +1,17 @@
 <idea-plugin>
-    <id>com.antigravity.fixpreview</id>
+    <id>tech.idawud.fixpreview</id>
     <name>FIX Preview</name>
-    <vendor>Antigravity</vendor>
+    <vendor email="idawud@tech.idawud" url="https://idawud.tech">idawud</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="FIX" implementationClass="com.antigravity.fixpreview.FixFileType" extensions="fix"/>
+        <fileType name="FIX" implementationClass="tech.idawud.fixpreview.FixFileType" extensions="fix"/>
     </extensions>
 
     <actions>
-        <action id="com.antigravity.fixpreview.OpenFixPreview"
-                class="com.antigravity.fixpreview.FixPreviewAction"
+        <action id="tech.idawud.fixpreview.OpenFixPreview"
+                class="tech.idawud.fixpreview.FixPreviewAction"
                 text="Open FIX Preview"
                 description="Open a side-by-side FIX message preview">
             <add-to-group group-id="EditorTabPopupGroup" anchor="last"/>

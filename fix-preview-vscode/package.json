@@ -3,7 +3,8 @@
     "displayName": "FIX Preview",
     "description": "Side-by-side preview for FIX protocol messages.",
     "version": "1.0.0",
-    "publisher": "antigravity",
+    "publisher": "idawud",
+    "icon": "icon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/idawud/fix-preview.git"

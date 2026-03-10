@@ -1,4 +1,4 @@
-package com.antigravity.fixpreview
+package tech.idawud.fixpreview
 
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent

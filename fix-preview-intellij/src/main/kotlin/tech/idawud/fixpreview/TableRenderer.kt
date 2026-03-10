@@ -1,4 +1,4 @@
-package com.antigravity.fixpreview
+package tech.idawud.fixpreview
 
 class TableRenderer {
     fun render(fields: List<FixField>): String {

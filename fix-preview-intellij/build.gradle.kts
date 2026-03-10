@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.0.0"
 }
 
-group = "com.antigravity"
+group = "tech.idawud"
 version = "1.0.0"
 
 repositories {
@@ -23,7 +23,7 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "com.antigravity.fixpreview"
+        id = "tech.idawud.fixpreview"
         name = "FIX Preview"
         version = "1.0.0"
     }

@@ -1,4 +1,4 @@
-package com.antigravity.fixpreview
+package tech.idawud.fixpreview
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

@@ -1,4 +1,4 @@
-package com.antigravity.fixpreview
+package tech.idawud.fixpreview
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.util.IconLoader

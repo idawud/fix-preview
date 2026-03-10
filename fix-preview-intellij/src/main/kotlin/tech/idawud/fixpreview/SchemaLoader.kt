@@ -1,4 +1,4 @@
-package com.antigravity.fixpreview
+package tech.idawud.fixpreview
 
 import org.w3c.dom.Element
 import java.io.File

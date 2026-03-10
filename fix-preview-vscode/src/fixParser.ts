@@ -69,6 +69,10 @@ export class FixParser {
                 continue;
             }
 
+            if (field.section === 'Tail') {
+                stack.length = 0;
+            }
+
             if (stack.length > 0) {
                 const currentGroup = stack[stack.length - 1];
                 // If we see a tag that is already in the current entry, start a new entry
