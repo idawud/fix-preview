@@ -14,7 +14,7 @@
                 class="tech.idawud.fixpreview.FixPreviewAction"
                 text="Open FIX Preview"
                 description="Open a side-by-side FIX message preview">
-            <add-to-group group-id="EditorTabPopupGroup" anchor="last"/>
+            <add-to-group group-id="EditorTabPopup" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>
