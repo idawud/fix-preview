@@ -125,34 +125,34 @@ class TableRenderer {
                                 <th class="col-tag">Tag</th>
                                 <th class="col-name">Field Name</th>
                                 <th class="col-value">Value</th>
-                                <th class="col-enum">Enum</th>
-                                <th class="col-desc">Description</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    
-                    ${renderSection("Standard Header", headerFields, true)}
-                    ${renderSection("Message Body", bodyFields, true)}
-                    ${renderSection("Standard Trailer", tailFields, true)}
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="tag">Tag</th>
+                            <th class="field-name">Field Name</th>
+                            <th class="value">Value</th>
+                            <th class="enum">Enum</th>
+                            <th class="description">Description</th>
+                        </tr>
+                    </thead>
+                    ${renderCollapsibleSection("header", "Standard Header", headerFields)}
+                    ${renderCollapsibleSection("body", "Message Body", bodyFields)}
+                    ${renderCollapsibleSection("tail", "Standard Trailer", tailFields)}
+                </table>
             </body>
             </html>
         """.trimIndent()
     }
 
-    private fun renderSection(title: String, fields: List<FixField>, isOpen: Boolean): String {
+    private fun renderCollapsibleSection(id: String, title: String, fields: List<FixField>): String {
         if (fields.isEmpty()) return ""
         return """
-            <details class="section" ${if (isOpen) "open" else ""}>
-                <summary>$title</summary>
-                <div class="section-content">
-                    <table>
-                        <tbody>
-                            ${renderFields(fields)}
-                        </tbody>
-                    </table>
-                </div>
-            </details>
+            <tr class="section-header" onclick="toggleSection('$id')">
+                <td colspan="5"><span class="arrow">▼</span> $title</td>
+            </tr>
+            <tbody id="$id">
+                ${renderFields(fields)}
+            </tbody>
         """.trimIndent()
     }
 
@@ -161,11 +161,11 @@ class TableRenderer {
         for (field in fields) {
             sb.append("""
                 <tr class="${if (field.isRepeatingGroup) "group-header-row" else ""}">
-                    <td class="col-tag tag">${field.tag}</td>
-                    <td class="col-name field-name">${field.tagName}</td>
-                    <td class="col-value">${field.value}</td>
-                    <td class="col-enum enum">${field.enumName}</td>
-                    <td class="col-desc">${field.description}</td>
+                    <td class="tag">${field.tag}</td>
+                    <td class="field-name">${field.tagName}</td>
+                    <td class="value">${field.value}</td>
+                    <td class="enum">${field.enumName}</td>
+                    <td class="description">${field.description}</td>
                 </tr>
             """.trimIndent())
 
@@ -174,9 +174,9 @@ class TableRenderer {
                     <tr>
                         <td colspan="5" style="padding: 0;">
                             ${field.children.mapIndexed { index, entry -> """
-                                <details class="group">
+                                <details>
                                     <summary>Entry #${index + 1}</summary>
-                                    <div class="group-content">
+                                    <div class="nested-content">
                                         <table>
                                             <tbody>
                                                 ${renderFields(entry)}
