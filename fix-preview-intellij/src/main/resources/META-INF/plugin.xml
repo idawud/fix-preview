@@ -2,6 +2,17 @@
     <id>tech.idawud.fixpreview</id>
     <name>FIX Preview</name>
     <vendor email="idawud@tech.idawud" url="https://idawud.tech">idawud</vendor>
+    
+    <description><![CDATA[
+        Side-by-side preview for FIX protocol messages.
+        <br>
+        <b>Features:</b>
+        <ul>
+            <li><b>Side-by-Side Preview</b>: View raw FIX messages alongside a human-readable, structured table.</li>
+            <li><b>Collapsible Sections</b>: Easily collapse/expand Standard Header, Body, and Trailer.</li>
+            <li><b>Support for Multi-entry Groups</b>: Correctly identifies and groups repeating entries (e.g., Parties).</li>
+        </ul>
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
