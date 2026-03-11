@@ -51,6 +51,27 @@ class TableRenderer {
                     .col-enum { width: 120px; }
                     .col-desc { width: auto; }
 
+                    /* Responsive Truncation */
+                    .description-text {
+                        display: block;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        cursor: pointer;
+                        max-width: 100%;
+                    }
+                    .description-text.expanded {
+                        white-space: normal;
+                        word-break: break-all;
+                    }
+                    @media (min-width: 600px) {
+                        .description-text {
+                            white-space: normal;
+                            word-break: break-word;
+                            cursor: default;
+                        }
+                    }
+
                     tr:hover {
                         background-color: #323232;
                     }
@@ -116,6 +137,25 @@ class TableRenderer {
                         background-color: #36393b;
                     }
                 </style>
+                <script>
+                    function toggleSection(id) {
+                        const tbody = document.getElementById(id);
+                        const row = tbody.previousElementSibling;
+                        if (tbody.style.display === 'none') {
+                            tbody.style.display = 'table-row-group';
+                            row.classList.remove('collapsed');
+                        } else {
+                            tbody.style.display = 'none';
+                            row.classList.add('collapsed');
+                        }
+                    }
+
+                    function toggleDescription(element) {
+                        if (window.innerWidth < 600) {
+                            element.classList.toggle('expanded');
+                        }
+                    }
+                </script>
             </head>
             <body>
                 <div class="container">
@@ -165,7 +205,11 @@ class TableRenderer {
                     <td class="field-name">${field.tagName}</td>
                     <td class="value">${field.value}</td>
                     <td class="enum">${field.enumName}</td>
-                    <td class="description">${field.description}</td>
+                    <td class="description">
+                        <div class="description-text" onclick="toggleDescription(this)" title="Click to expand/collapse">
+                            ${field.description}
+                        </div>
+                    </td>
                 </tr>
             """.trimIndent())
 

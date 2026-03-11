@@ -46,6 +46,27 @@ export class TableRenderer {
                     .enum { width: 180px; color: var(--vscode-symbolIcon-enumeratorMemberForeground); font-style: italic; }
                     .description { width: auto; color: var(--vscode-descriptionForeground); }
 
+                    /* Responsive Truncation */
+                    .description-text {
+                        display: block;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        cursor: pointer;
+                        max-width: 100%;
+                    }
+                    .description-text.expanded {
+                        white-space: normal;
+                        word-break: break-word;
+                    }
+                    @media (min-width: 800px) {
+                        .description-text {
+                            white-space: normal;
+                            word-break: break-word;
+                            cursor: default;
+                        }
+                    }
+
                     .section-header {
                         background-color: var(--vscode-editorGroupHeader-tabsBackground);
                         cursor: pointer;
@@ -107,6 +128,12 @@ export class TableRenderer {
                             row.classList.add('collapsed');
                         }
                     }
+
+                    function toggleDescription(element) {
+                        if (window.innerWidth < 800) {
+                            element.classList.toggle('expanded');
+                        }
+                    }
                 </script>
             </head>
             <body>
@@ -149,7 +176,11 @@ export class TableRenderer {
                     <td class="field-name">${field.tagName}</td>
                     <td class="value">${field.value}</td>
                     <td class="enum">${field.enumName}</td>
-                    <td class="description">${field.description}</td>
+                    <td class="description">
+                        <div class="description-text" onclick="toggleDescription(this)" title="Click to expand/collapse">
+                            ${field.description}
+                        </div>
+                    </td>
                 </tr>
             `;
 
